@@ -63,6 +63,9 @@ export function joinGroup(groupId: string, profileId: string): GroupWithMembers 
   // Auto-book when we reach 4 members
   if (result.members.length >= 4 && result.status === "forming") {
     autoBook(result);
+    // Re-read group after booking to return updated status
+    const updated = db.prepare("SELECT * FROM groups WHERE id = ?").get(groupId) as Group;
+    return { ...updated, members: result.members };
   }
 
   return result;
