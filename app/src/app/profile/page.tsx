@@ -19,6 +19,7 @@ interface Profile {
 export default function ProfilePage() {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [selectedId, setSelectedId] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const [form, setForm] = useState({
     name: "",
     age: 25,
@@ -40,6 +41,7 @@ export default function ProfilePage() {
   async function createProfile(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
+    setError("");
     const res = await fetch("/api/profiles", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -48,10 +50,24 @@ export default function ProfilePage() {
         languages: form.languages.split(",").map((l) => l.trim()).filter(Boolean),
       }),
     });
-    const profile = await res.json();
-    setProfiles((prev) => [profile, ...prev]);
-    setSelectedId(profile.id);
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.details ? data.details.map((d: { message: string }) => d.message).join(", ") : data.error);
+      setSaving(false);
+      return;
+    }
+    setProfiles((prev) => [data, ...prev]);
+    setSelectedId(data.id);
+    setForm({ name: "", age: 25, languages: "English", skill_level: 3.0, city: "New York", bio: "", preferred_age_min: 18, preferred_age_max: 50, preferred_skill_min: 1.0, preferred_skill_max: 5.0 });
     setSaving(false);
+  }
+
+  async function deleteProfile(id: string) {
+    const res = await fetch(`/api/profiles/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setProfiles((prev) => prev.filter((p) => p.id !== id));
+      if (selectedId === id) setSelectedId("");
+    }
   }
 
   const selected = profiles.find((p) => p.id === selectedId);
@@ -80,8 +96,18 @@ export default function ProfilePage() {
 
       {selected && (
         <div className="bg-white border border-gray-200 rounded-xl p-6 max-w-md">
-          <h2 className="text-xl font-bold mb-1">{selected.name}</h2>
-          <p className="text-gray-500 text-sm mb-3">{selected.age} years old · {selected.city}</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h2 className="text-xl font-bold mb-1">{selected.name}</h2>
+              <p className="text-gray-500 text-sm mb-3">{selected.age} years old · {selected.city}</p>
+            </div>
+            <button
+              onClick={() => deleteProfile(selected.id)}
+              className="text-red-500 text-sm hover:text-red-700 font-medium"
+            >
+              Delete
+            </button>
+          </div>
           <p className="text-gray-600 text-sm mb-3">{selected.bio}</p>
           <div className="space-y-1 text-sm text-gray-500">
             <p>Skill Level: {selected.skill_level}</p>
@@ -95,6 +121,11 @@ export default function ProfilePage() {
 
       <div className="bg-white border border-gray-200 rounded-xl p-6 max-w-md">
         <h2 className="text-lg font-bold mb-4">Create New Profile</h2>
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg mb-4 text-sm">
+            {error}
+          </div>
+        )}
         <form onSubmit={createProfile} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Name</label>
@@ -103,7 +134,7 @@ export default function ProfilePage() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Age</label>
-              <input type="number" min={13} max={99} value={form.age} onChange={(e) => setForm({ ...form, age: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              <input type="number" min={13} max={120} value={form.age} onChange={(e) => setForm({ ...form, age: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Skill (1-5)</label>
@@ -120,16 +151,16 @@ export default function ProfilePage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Bio</label>
-            <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" rows={2} />
+            <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" rows={2} maxLength={500} />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Preferred Age Min</label>
-              <input type="number" min={13} max={99} value={form.preferred_age_min} onChange={(e) => setForm({ ...form, preferred_age_min: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              <input type="number" min={13} max={120} value={form.preferred_age_min} onChange={(e) => setForm({ ...form, preferred_age_min: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Preferred Age Max</label>
-              <input type="number" min={13} max={99} value={form.preferred_age_max} onChange={(e) => setForm({ ...form, preferred_age_max: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+              <input type="number" min={13} max={120} value={form.preferred_age_max} onChange={(e) => setForm({ ...form, preferred_age_max: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">

@@ -136,6 +136,16 @@ export function getBookingsForGroup(groupId: string): Booking[] {
   return db.prepare("SELECT * FROM bookings WHERE group_id = ?").all(groupId) as Booking[];
 }
 
+export function leaveGroup(groupId: string, profileId: string): boolean {
+  const db = getDb();
+  const group = db.prepare("SELECT status FROM groups WHERE id = ?").get(groupId) as { status: string } | undefined;
+  if (!group) return false;
+  if (group.status !== "forming") return false; // can't leave a booked group
+
+  const result = db.prepare("DELETE FROM group_members WHERE group_id = ? AND profile_id = ?").run(groupId, profileId);
+  return result.changes > 0;
+}
+
 export function getAllGroups(): GroupWithMembers[] {
   const db = getDb();
   const groups = db.prepare("SELECT * FROM groups ORDER BY created_at DESC").all() as Group[];

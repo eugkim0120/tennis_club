@@ -1,45 +1,58 @@
-# Test Report - TennisMatch MVP v0.1.0
+# Test Report - TennisMatch v0.4.0
 
 ## Date: 2026-03-04
 
 ## Unit Tests
-- **13/13 passing**
-- Matching algorithm: 5 tests (empty profile, skill ranking, age range, language overlap)
-- Booking system: 5 tests (create group, reuse group, join, dedup, auto-book at 4)
+- **24/24 passing** (3 test suites)
+- Validation: 8 tests (empty body, age range, skill range, languages type, name length, sanitize)
+- Matching: 5 tests (empty profile, skill ranking, age range, language overlap, mutual detection)
+- Booking: 5 tests (create group, reuse group, join, dedup, auto-book at 4)
 - Interest/Mutual: 3 tests (express interest, mutual detection, listing)
+- Sanitization: 3 tests (strip HTML, preserve text, trim whitespace)
 
-## Customer Journey E2E Test
-All flows tested and working:
+## Iteration 1: Dave's Rage Test (v0.3.0)
+Angry user hammering the app with bad inputs.
 
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Profile creation | PASS | All fields persist correctly |
-| Profile listing | PASS | Returns all profiles ordered by creation |
-| Court scraping | PASS | Seeds 4 courts for New York with time slots |
-| Standout matching | PASS | Correctly ranks by composite score |
-| Express interest | PASS | Creates interested status |
-| Mutual matching | PASS | Detects when both sides interested |
-| Group forming | PASS | Creates and reuses forming groups by city |
-| Auto-booking at 4 | PASS | Books court and assigns time when 4th joins |
-| Court slot removal | PASS | Booked slot removed from availability |
+| Issue | Status | Fix |
+|-------|--------|-----|
+| Empty profile accepted | FIXED | Full validation layer added |
+| Age 900, skill 9000 accepted | FIXED | Range validation (age 13-120, skill 1-5) |
+| Negative age/skill accepted | FIXED | Min value checks |
+| Languages as string accepted | FIXED | Array type validation |
+| XSS in bio stored raw | FIXED | HTML tag sanitization + React auto-escapes |
+| Invalid JSON silently 500s | FIXED | try/catch with error response |
+| Booking with fake profile | FIXED | Profile existence check before join |
+| Self-matching allowed | FIXED | Prevent profile_id === target_id |
+| SQL injection | ALREADY SAFE | Parameterized queries in better-sqlite3 |
+| 404 handling | ALREADY WORKS | Next.js returns 404 |
 
-## Issues Found During Testing
+## Iteration 2: Karen's Chaos Test (v0.4.0)
+Erratic user clicking everything, changing mind, doing unexpected things.
 
-### Critical
-- None
+| Issue | Status | Fix |
+|-------|--------|-----|
+| Duplicate profiles allowed | NOTED | Valid use case - users may want multiple profiles. Added delete button. |
+| Self-duplicates in matches | NOTED | Will be less relevant when auth is added (one profile per user) |
+| No way to leave a group | FIXED | Added DELETE /api/bookings endpoint |
+| No single profile GET | FIXED | Added GET /api/profiles/[id] |
+| No profile editing | FIXED | Added PATCH /api/profiles/[id] |
+| No profile deletion | FIXED | Added DELETE /api/profiles/[id] |
+| Time slots are raw ISO | FIXED | Added available_slots_formatted with human-readable display |
+| Validation errors not shown | FIXED | Error banner in profile form |
+| Can't leave booked group | BY DESIGN | Prevents abandoning committed bookings |
 
-### Medium
-1. **joinGroup returns stale status**: The response after 4th player shows `status: "forming"` even though the DB is updated to "booked". The group data is fetched before auto-book mutates it. Need to re-read after autoBook.
-2. **No input validation on skill_level**: Accepts values outside 1-5 range.
-
-### Low / UX
-3. **Profile selector UX**: Must manually select profile from dropdown on every page. Should use session/cookie.
-4. **No loading states on initial page load**: Courts page shows "No courts found" briefly before loading.
-5. **No confirmation after booking**: User should see a clear "Court booked!" banner.
-6. **Time slots show as ISO strings**: Should format as "Mon Mar 4, 8:00 AM".
-
-## Next Iteration Priorities
-1. Fix stale group status after auto-book (Medium #1)
-2. Add session-based profile selection
-3. Improve time slot display formatting
-4. Add validation for all inputs
+## API Endpoints (v0.4.0)
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | /api/profiles | List all profiles |
+| POST | /api/profiles | Create profile (with validation) |
+| GET | /api/profiles/[id] | Get single profile |
+| PATCH | /api/profiles/[id] | Update profile fields |
+| DELETE | /api/profiles/[id] | Delete profile |
+| GET | /api/matches | Get standout matches for profile |
+| POST | /api/matches | Express interest or pass |
+| GET | /api/courts | List courts (optionally by city) |
+| POST | /api/courts | Scrape courts for city |
+| GET | /api/bookings | List groups for profile |
+| POST | /api/bookings | Join/create group in city |
+| DELETE | /api/bookings | Leave a forming group |

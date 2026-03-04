@@ -13,10 +13,27 @@
 - [x] Customer journey E2E test script
 - [x] Test report with findings
 
+## v0.3.0 - Input Validation (Dave's Rage Test)
+- [x] Full input validation (age, skill, name, languages, bio)
+- [x] HTML sanitization for text fields
+- [x] Invalid JSON error handling (was silently 500ing)
+- [x] Self-matching prevention
+- [x] Profile existence check before group join
+- [x] 24 unit tests (11 new validation tests)
+
+## v0.4.0 - UX Fixes (Karen's Chaos Test)
+- [x] Single profile GET endpoint (GET /api/profiles/[id])
+- [x] Profile editing (PATCH /api/profiles/[id])
+- [x] Profile deletion (DELETE /api/profiles/[id])
+- [x] Leave group (DELETE /api/bookings)
+- [x] Human-readable time slot formatting
+- [x] Validation error display in UI
+- [x] Profile form resets after creation
+
 ## Planned (Post-MVP)
 - [ ] iOS app
+- [ ] User authentication (one profile per user)
 - [ ] Real-time chat between matched players
 - [ ] Rating system after matches
 - [ ] Payment integration for court bookings
-- [ ] Session-based profile selection (no manual dropdown)
-- [ ] Input validation for all fields
+- [ ] Session-based profile selection
