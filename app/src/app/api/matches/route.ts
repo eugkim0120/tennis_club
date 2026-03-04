@@ -19,20 +19,32 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const { profile_id, target_id, action } = body;
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const { profile_id, target_id, action } = body as { profile_id: string; target_id: string; action: string };
 
   if (!profile_id || !target_id || !action) {
     return NextResponse.json({ error: "profile_id, target_id, and action are required" }, { status: 400 });
   }
 
+  if (profile_id === target_id) {
+    return NextResponse.json({ error: "Cannot match with yourself" }, { status: 400 });
+  }
+
+  if (action !== "interested" && action !== "pass") {
+    return NextResponse.json({ error: "action must be 'interested' or 'pass'" }, { status: 400 });
+  }
+
   if (action === "interested") {
     const match = expressInterest(profile_id, target_id);
     return NextResponse.json(match);
-  } else if (action === "pass") {
-    passOnProfile(profile_id, target_id);
-    return NextResponse.json({ ok: true });
   }
 
-  return NextResponse.json({ error: "action must be 'interested' or 'pass'" }, { status: 400 });
+  passOnProfile(profile_id, target_id);
+  return NextResponse.json({ ok: true });
 }
