@@ -20,6 +20,7 @@ export interface Profile {
 }
 
 export interface CreateProfileInput {
+  user_id?: string;
   name: string;
   age: number;
   languages: string[];
@@ -45,10 +46,11 @@ export function createProfile(input: CreateProfileInput): Profile {
   const db = getDb();
   const id = uuid();
   db.prepare(`
-    INSERT INTO profiles (id, name, age, languages, skill_level, latitude, longitude, city, bio, preferred_age_min, preferred_age_max, preferred_skill_min, preferred_skill_max)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO profiles (id, user_id, name, age, languages, skill_level, latitude, longitude, city, bio, preferred_age_min, preferred_age_max, preferred_skill_min, preferred_skill_max)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     id,
+    input.user_id ?? null,
     input.name,
     input.age,
     JSON.stringify(input.languages),

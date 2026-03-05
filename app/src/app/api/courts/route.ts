@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAllCourts, getCourtsByCity, scrapeCourts, Court } from "@/lib/courts";
+import { getAllCourts, getCourtsByCity, scrapeCourtsReal, Court } from "@/lib/courts";
 
 function formatSlot(iso: string): string {
   const d = new Date(iso);
@@ -48,6 +48,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "city is required" }, { status: 400 });
   }
 
-  const courts = scrapeCourts(city);
-  return NextResponse.json({ scraped: courts.length, courts: courts.map(enrichCourt) });
+  const courts = await scrapeCourtsReal(city);
+  return NextResponse.json({
+    scraped: courts.length,
+    source: courts.length > 0 && courts[0].source_url ? "openstreetmap" : "demo",
+    courts: courts.map(enrichCourt),
+  });
 }

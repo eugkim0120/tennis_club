@@ -17,8 +17,17 @@ export function getDb(): Database.Database {
 
 function initSchema(db: Database.Database) {
   db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      session_token TEXT,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS profiles (
       id TEXT PRIMARY KEY,
+      user_id TEXT UNIQUE REFERENCES users(id),
       name TEXT NOT NULL,
       age INTEGER NOT NULL,
       languages TEXT NOT NULL DEFAULT '[]',
@@ -71,6 +80,14 @@ function initSchema(db: Database.Database) {
       profile_id TEXT NOT NULL REFERENCES profiles(id),
       joined_at TEXT DEFAULT (datetime('now')),
       PRIMARY KEY (group_id, profile_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS messages (
+      id TEXT PRIMARY KEY,
+      group_id TEXT NOT NULL REFERENCES groups(id),
+      profile_id TEXT NOT NULL REFERENCES profiles(id),
+      content TEXT NOT NULL,
+      created_at TEXT DEFAULT (datetime('now'))
     );
 
     CREATE TABLE IF NOT EXISTS bookings (

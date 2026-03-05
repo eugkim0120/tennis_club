@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createProfile, getAllProfiles } from "@/lib/profiles";
 import { validateProfile, sanitizeString } from "@/lib/validation";
+import { getUserBySession, getProfileForUser } from "@/lib/auth";
 
 export async function GET() {
   const profiles = getAllProfiles();
@@ -8,6 +9,19 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  // Require authentication
+  const token = req.cookies.get("session")?.value;
+  const user = token ? getUserBySession(token) : null;
+  if (!user) {
+    return NextResponse.json({ error: "Must be logged in to create a profile" }, { status: 401 });
+  }
+
+  // One profile per user
+  const existing = getProfileForUser(user.id);
+  if (existing) {
+    return NextResponse.json({ error: "You already have a profile", profile_id: existing.id }, { status: 409 });
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await req.json();
@@ -21,6 +35,7 @@ export async function POST(req: NextRequest) {
   }
 
   const profile = createProfile({
+    user_id: user.id,
     name: sanitizeString(body.name as string),
     age: body.age as number,
     languages: (body.languages as string[] | undefined) ?? [],
