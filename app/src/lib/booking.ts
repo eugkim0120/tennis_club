@@ -1,7 +1,7 @@
 import { getDb } from "./db";
 import crypto from "crypto";
 const uuid = () => crypto.randomUUID();
-import { getCourtsByCity, Court } from "./courts";
+import { getCourtsByCity, scrapeCourts, Court } from "./courts";
 
 export interface Group {
   id: string;
@@ -73,7 +73,13 @@ export function joinGroup(groupId: string, profileId: string): GroupWithMembers 
 
 function autoBook(group: GroupWithMembers): Booking | null {
   const db = getDb();
-  const courts = getCourtsByCity(group.city);
+  let courts = getCourtsByCity(group.city);
+
+  // If no courts in DB for this city, generate demo courts automatically
+  if (courts.length === 0) {
+    scrapeCourts(group.city);
+    courts = getCourtsByCity(group.city);
+  }
 
   // Find first available court with a slot
   for (const court of courts) {

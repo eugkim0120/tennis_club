@@ -30,10 +30,35 @@
 - [x] Validation error display in UI
 - [x] Profile form resets after creation
 
+## v0.5.0 - Authentication & Real Courts (Elon/Farley Cycle 1)
+- [x] User authentication (register/login/logout with bcrypt + sessions)
+- [x] Cookie-based session management (httpOnly, 30-day expiry)
+- [x] One profile per user enforcement (409 on duplicate)
+- [x] Auth-gated profile creation and messaging
+- [x] OpenStreetMap Overpass API for real tennis court data worldwide
+- [x] Nominatim geocoding for unknown cities
+- [x] 20+ cities in coordinate lookup table
+- [x] Graceful fallback to demo data when APIs unavailable
+- [x] Free-text city input (replaced dropdown)
+- [x] Data source indicator (OpenStreetMap vs demo)
+
+## v0.6.0 - Group Messaging & Games (Elon/Farley Cycle 2)
+- [x] Group messaging system (auth-gated, member-verified)
+- [x] Messages API (GET/POST with 1000 char limit)
+- [x] My Games page with upcoming booked games
+- [x] Inline chat panel in matches and games pages
+- [x] Auth-aware navigation (email display, logout button)
+- [x] Landing page for logged-out users with onboarding steps
+- [x] Login/register toggle form
+
+## v0.7.0 - Integration Reliability (Elon/Farley Cycle 3)
+- [x] Fix auto-booking: auto-generate courts when none exist in DB for city
+- [x] Full end-to-end integration test (auth -> profile -> match -> book -> chat)
+- [x] Comprehensive integration test script (21/21 critical paths passing)
+
 ## Planned (Post-MVP)
 - [ ] iOS app
-- [ ] User authentication (one profile per user)
-- [ ] Real-time chat between matched players
 - [ ] Rating system after matches
 - [ ] Payment integration for court bookings
-- [ ] Session-based profile selection
+- [ ] Push notifications for match/booking events
+- [ ] Real court booking API integrations
