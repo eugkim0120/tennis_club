@@ -23,11 +23,11 @@ export default function Home() {
   return (
     <div className="space-y-8">
       <div className="text-center py-16">
-        <h1 className="text-5xl font-bold text-gray-900 mb-4">TennisMatch</h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">TennisMatch</h1>
+        <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
           Find tennis partners near you. Get matched by skill level. We auto-book a court when your group hits 4.
         </p>
-        <Link href="/login" className="bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-green-700 transition-colors inline-block">
+        <Link href="/login" className="bg-green-600 text-white px-6 md:px-8 py-3 rounded-lg text-lg font-medium hover:bg-green-700 transition-colors inline-block">
           Get Started
         </Link>
       </div>

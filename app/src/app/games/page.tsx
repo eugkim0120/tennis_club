@@ -111,13 +111,13 @@ export default function GamesPage() {
         <div className="space-y-4">
           <h2 className="text-lg font-bold text-green-700">Upcoming Games</h2>
           {upcoming.map((g) => (
-            <div key={g.id} className="bg-white border-2 border-green-200 rounded-xl p-6 space-y-3">
-              <div className="flex justify-between items-start">
+            <div key={g.id} className="bg-white border-2 border-green-200 rounded-xl p-4 md:p-6 space-y-3">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                 <div>
                   <h3 className="font-bold text-lg">{g.court_name ?? g.city}</h3>
                   {g.court_address && <p className="text-gray-500 text-sm">{g.court_address}</p>}
                 </div>
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">Booked</span>
+                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold self-start">Booked</span>
               </div>
               {g.scheduled_time && (
                 <p className="text-lg font-semibold">
@@ -126,7 +126,7 @@ export default function GamesPage() {
               )}
               <div>
                 <p className="text-sm font-medium text-gray-700 mb-1">Players ({g.member_names?.length}/4):</p>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {g.member_names?.map((name, i) => (
                     <span key={i} className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-sm font-medium">{name}</span>
                   ))}
@@ -142,17 +142,17 @@ export default function GamesPage() {
         <div className="space-y-4">
           <h2 className="text-lg font-bold text-yellow-700">Groups Forming</h2>
           {forming.map((g) => (
-            <div key={g.id} className="bg-white border border-yellow-200 rounded-xl p-5 flex justify-between items-center">
+            <div key={g.id} className="bg-white border border-yellow-200 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
               <div>
                 <span className="font-semibold">{g.city}</span>
                 <span className="ml-2 text-sm text-yellow-700">{g.member_names?.length}/4 players</span>
-                <div className="flex gap-1 mt-1">
+                <div className="flex flex-wrap gap-1 mt-1">
                   {g.member_names?.map((name, i) => (
                     <span key={i} className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">{name}</span>
                   ))}
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div className="flex gap-3 self-start sm:self-center">
                 <button onClick={() => openChat(g.id)} className="text-sm text-green-700 font-medium hover:underline">Chat</button>
                 <button onClick={() => leaveGroup(g.id)} className="text-sm text-red-500 font-medium hover:underline">Leave</button>
               </div>

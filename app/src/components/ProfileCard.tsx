@@ -50,7 +50,7 @@ export default function ProfileCard({ profile, score, breakdown, onInterested, o
         )}
       </div>
 
-      <div className="flex gap-2 mb-3">
+      <div className="flex flex-wrap gap-2 mb-3">
         <span className="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded text-xs font-medium">
           {skillLabel(profile.skill_level)} ({profile.skill_level.toFixed(1)})
         </span>

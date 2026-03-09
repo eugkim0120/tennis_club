@@ -136,19 +136,19 @@ export default function MatchesPage() {
         <div className="space-y-3">
           <h2 className="text-lg font-bold">Your Groups</h2>
           {groups.map((g) => (
-            <div key={g.id} className="bg-white border border-gray-200 rounded-xl p-4 flex justify-between items-center">
+            <div key={g.id} className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
               <div>
                 <span className="font-semibold">{g.city}</span>
                 <span className={`ml-2 text-xs px-2 py-0.5 rounded-full font-medium ${g.status === "booked" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"}`}>
                   {g.status === "booked" ? "Court Booked!" : `${g.members.length}/4 forming`}
                 </span>
                 {g.scheduled_time && (
-                  <span className="ml-2 text-sm text-gray-500">
+                  <span className="block sm:inline sm:ml-2 text-sm text-gray-500 mt-1 sm:mt-0">
                     {new Date(g.scheduled_time).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
                   </span>
                 )}
               </div>
-              <button onClick={() => openChat(g.id)} className="text-sm text-green-700 font-medium hover:underline">
+              <button onClick={() => openChat(g.id)} className="text-sm text-green-700 font-medium hover:underline self-start sm:self-center">
                 Chat ({g.members.length})
               </button>
             </div>
@@ -186,10 +186,10 @@ export default function MatchesPage() {
       {selectedId && (
         <div className="bg-white border border-gray-200 rounded-xl p-6">
           <h2 className="text-lg font-bold mb-3">Join a Group (Auto-books at 4 players)</h2>
-          <div className="flex gap-3 items-end">
-            <div>
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
+            <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-              <input type="text" value={joinCity} onChange={(e) => setJoinCity(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900" placeholder="Any city..." />
+              <input type="text" value={joinCity} onChange={(e) => setJoinCity(e.target.value)} className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 w-full" placeholder="Any city..." />
             </div>
             <button onClick={handleJoinGroup} className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 transition-colors">
               Join Group

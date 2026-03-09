@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#15803d"/>
+  <circle cx="256" cy="240" r="120" fill="#a3e635" stroke="#fff" stroke-width="8"/>
+  <path d="M136 240 C136 240 200 180 256 180 C312 180 376 240 376 240" fill="none" stroke="#fff" stroke-width="6"/>
+  <path d="M256 120 L256 360" fill="none" stroke="#fff" stroke-width="6"/>
+  <text x="256" y="430" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="64" fill="#fff">MATCH</text>
+</svg>

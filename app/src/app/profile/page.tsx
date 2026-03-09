@@ -131,7 +131,7 @@ export default function ProfilePage() {
             <label className="block text-sm font-medium text-gray-700">Name</label>
             <input type="text" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Age</label>
               <input type="number" min={13} max={120} value={form.age} onChange={(e) => setForm({ ...form, age: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
@@ -153,7 +153,7 @@ export default function ProfilePage() {
             <label className="block text-sm font-medium text-gray-700">Bio</label>
             <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" rows={2} maxLength={500} />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Preferred Age Min</label>
               <input type="number" min={13} max={120} value={form.preferred_age_min} onChange={(e) => setForm({ ...form, preferred_age_min: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
@@ -163,7 +163,7 @@ export default function ProfilePage() {
               <input type="number" min={13} max={120} value={form.preferred_age_max} onChange={(e) => setForm({ ...form, preferred_age_max: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Preferred Skill Min</label>
               <input type="number" min={1} max={5} step={0.5} value={form.preferred_skill_min} onChange={(e) => setForm({ ...form, preferred_skill_min: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
