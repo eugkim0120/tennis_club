@@ -34,50 +34,60 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="bg-white border border-gray-200 rounded-xl p-8 w-full max-w-sm shadow-sm">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          {mode === "login" ? "Welcome Back" : "Join TennisMatch"}
-        </h1>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg mb-4 text-sm">
-            {error}
+    <div className="flex items-center justify-center min-h-[70vh]">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <div className="w-12 h-12 bg-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-emerald-600/20">
+            <span className="text-white font-bold text-xl">T</span>
           </div>
-        )}
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+            {mode === "login" ? "Welcome back" : "Create your account"}
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            {mode === "login" ? "Sign in to continue to TennisMatch" : "Start with 100 free credits"}
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email" required value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-              placeholder="you@example.com"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password" required minLength={6} value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
-              placeholder="At least 6 characters"
-            />
-          </div>
-          <button
-            type="submit" disabled={loading}
-            className="w-full bg-green-600 text-white py-2.5 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
-          >
-            {loading ? "..." : mode === "login" ? "Log In" : "Create Account"}
-          </button>
-        </form>
+        <div className="bg-white rounded-2xl p-6 border border-slate-200/60 shadow-sm">
+          {error && (
+            <div className="bg-red-50 border border-red-200/60 text-red-600 px-4 py-2.5 rounded-xl mb-4 text-sm font-medium">
+              {error}
+            </div>
+          )}
 
-        <p className="text-center text-sm text-gray-500 mt-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
+              <input
+                type="email" required value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all bg-slate-50/50"
+                placeholder="you@example.com"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+              <input
+                type="password" required minLength={6} value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all bg-slate-50/50"
+                placeholder="At least 6 characters"
+              />
+            </div>
+            <button
+              type="submit" disabled={loading}
+              className="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-semibold hover:bg-emerald-700 transition-all disabled:opacity-50 shadow-sm text-sm"
+            >
+              {loading ? "Loading..." : mode === "login" ? "Sign In" : "Create Account"}
+            </button>
+          </form>
+        </div>
+
+        <p className="text-center text-sm text-slate-500 mt-5">
           {mode === "login" ? (
-            <>No account? <button onClick={() => setMode("register")} className="text-green-700 font-medium">Sign up</button></>
+            <>Don&apos;t have an account?{" "}<button onClick={() => { setMode("register"); setError(""); }} className="text-emerald-600 font-semibold hover:text-emerald-700">Sign up</button></>
           ) : (
-            <>Have an account? <button onClick={() => setMode("login")} className="text-green-700 font-medium">Log in</button></>
+            <>Already have an account?{" "}<button onClick={() => { setMode("login"); setError(""); }} className="text-emerald-600 font-semibold hover:text-emerald-700">Sign in</button></>
           )}
         </p>
       </div>

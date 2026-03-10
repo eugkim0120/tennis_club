@@ -15,6 +15,8 @@ jest.mock("./db", () => ({
           latitude REAL, longitude REAL, city TEXT, bio TEXT DEFAULT '',
           preferred_age_min INTEGER DEFAULT 18, preferred_age_max INTEGER DEFAULT 99,
           preferred_skill_min REAL DEFAULT 1.0, preferred_skill_max REAL DEFAULT 5.0,
+          reliability_score REAL NOT NULL DEFAULT 1.0,
+          games_played INTEGER NOT NULL DEFAULT 0, games_attended INTEGER NOT NULL DEFAULT 0,
           created_at TEXT DEFAULT (datetime('now'))
         );
         CREATE TABLE match_interests (

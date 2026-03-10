@@ -25,8 +25,21 @@ export async function POST(req: NextRequest) {
 
   const { action, email, password } = body;
 
-  if (!action || !email || !password) {
-    return NextResponse.json({ error: "action, email, and password are required" }, { status: 400 });
+  if (!action) {
+    return NextResponse.json({ error: "action is required" }, { status: 400 });
+  }
+
+  // Logout only needs session cookie, not email/password
+  if (action === "logout") {
+    const sessionCookie = req.cookies.get("session")?.value;
+    if (sessionCookie) logout(sessionCookie);
+    const res = NextResponse.json({ message: "Logged out" });
+    res.headers.set("Set-Cookie", clearSessionCookie());
+    return res;
+  }
+
+  if (!email || !password) {
+    return NextResponse.json({ error: "email and password are required" }, { status: 400 });
   }
 
   if (password.length < 6) {
@@ -45,14 +58,6 @@ export async function POST(req: NextRequest) {
       const user = login(email, password);
       const res = NextResponse.json({ id: user.id, email: user.email });
       res.headers.set("Set-Cookie", setSessionCookie(user.session_token!));
-      return res;
-    }
-
-    if (action === "logout") {
-      const sessionCookie = req.cookies.get("session")?.value;
-      if (sessionCookie) logout(sessionCookie);
-      const res = NextResponse.json({ ok: true });
-      res.headers.set("Set-Cookie", clearSessionCookie());
       return res;
     }
 

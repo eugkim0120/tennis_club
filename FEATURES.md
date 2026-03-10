@@ -56,6 +56,35 @@
 - [x] Full end-to-end integration test (auth -> profile -> match -> book -> chat)
 - [x] Comprehensive integration test script (21/21 critical paths passing)
 
+## v0.8.0 - Production Fix & Comprehensive Testing
+- [x] Fix Turbopack bcryptjs module resolution (serverExternalPackages)
+- [x] Fix logout requiring email/password (only needs session cookie)
+- [x] Fix pass action response (returns status instead of bare ok)
+- [x] Fix integration test port configuration (env-configurable)
+- [x] Comprehensive integration test suite (40/40 tests, 12 categories)
+- [x] All 6 pages render correctly (200 status)
+- [x] Production build verified
+- [x] Notion documentation (Meta AI project subpage)
+
+## v0.9.0 - Commitment System & UI Overhaul
+- [x] Credit wallet system (100 free credits on signup, top-up support)
+- [x] Stake-backed group creation (5-25 credits configurable)
+- [x] Group creation with filters (skill range, reliability minimum, join mode)
+- [x] Open join and approval-based join modes
+- [x] Browse games page with city filtering
+- [x] Create game page with full configuration
+- [x] Check-in system for booked games
+- [x] Game settlement (refund attendees, forfeit no-shows, distribute penalty pool)
+- [x] Cancellation with tiered refund policy (>24h: full, 12-24h: 50%, <12h: none)
+- [x] Reliability score tracking (games_attended / games_played)
+- [x] In-app notification system (join, cancel, book, settle events)
+- [x] Complete UI overhaul (emerald/slate color scheme, rounded-2xl cards, glassmorphism nav)
+- [x] Wallet balance in navigation bar
+- [x] Notification bell with unread count
+- [x] Mobile responsive navigation with hamburger menu
+- [x] Floating chat panel for group messaging
+- [x] 40/40 integration tests, 24/24 unit tests, all 9 pages render
+
 ## Planned (Post-MVP)
 - [ ] iOS app
 - [ ] Rating system after matches

@@ -1,7 +1,7 @@
 #!/bin/bash
 # Full integration test: auth -> profiles -> matching -> courts -> booking -> messaging
 set -e
-BASE="http://localhost:3456"
+BASE="${TEST_BASE_URL:-http://localhost:3000}"
 PASS=0
 FAIL=0
 

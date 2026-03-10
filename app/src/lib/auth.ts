@@ -1,6 +1,7 @@
 import { getDb } from "./db";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { getOrCreateWallet } from "./wallet";
 
 export interface User {
   id: string;
@@ -21,6 +22,9 @@ export function register(email: string, password: string): User {
   db.prepare("INSERT INTO users (id, email, password_hash, session_token) VALUES (?, ?, ?, ?)").run(
     id, email, password_hash, session_token
   );
+
+  // Create wallet with 100 welcome credits
+  getOrCreateWallet(id);
 
   return { id, email, session_token, created_at: new Date().toISOString() };
 }

@@ -46,5 +46,5 @@ export async function POST(req: NextRequest) {
   }
 
   passOnProfile(profile_id, target_id);
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ status: "passed", profile_id, target_id });
 }

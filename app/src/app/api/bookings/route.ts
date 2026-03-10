@@ -32,15 +32,18 @@ export async function POST(req: NextRequest) {
   }
 
   const db = getDb();
-  const profile = db.prepare("SELECT id FROM profiles WHERE id = ?").get(profile_id);
+  const profile = db.prepare("SELECT id, user_id FROM profiles WHERE id = ?").get(profile_id) as { id: string; user_id: string } | undefined;
   if (!profile) {
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
 
-  const group = getOrCreateGroup(city);
-  const updated = joinGroup(group.id, profile_id);
-
-  return NextResponse.json(updated);
+  try {
+    const group = getOrCreateGroup(city);
+    const updated = joinGroup(group.id, profile_id, profile.user_id);
+    return NextResponse.json(updated);
+  } catch (err) {
+    return NextResponse.json({ error: (err as Error).message }, { status: 400 });
+  }
 }
 
 export async function DELETE(req: NextRequest) {
@@ -59,7 +62,7 @@ export async function DELETE(req: NextRequest) {
 
   const left = leaveGroup(group_id, profile_id);
   if (!left) {
-    return NextResponse.json({ error: "Could not leave group. Either the group doesn't exist, you're not in it, or it's already booked." }, { status: 400 });
+    return NextResponse.json({ error: "Could not leave group" }, { status: 400 });
   }
 
   return NextResponse.json({ ok: true, message: "Left the group" });
