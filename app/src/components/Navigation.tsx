@@ -10,16 +10,10 @@ interface AuthState {
 
 export default function Navigation() {
   const pathname = usePathname();
-<<<<<<< Updated upstream
-  const router = useRouter();
-  const [user, setUser] = useState<{ email: string; profile_id: string | null } | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-=======
   const [auth, setAuth] = useState<AuthState>({ user: null, profile_id: null });
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
->>>>>>> Stashed changes
 
   useEffect(() => {
     fetch("/api/auth/me").then((r) => r.ok ? r.json() : null).then((d) => {
@@ -35,15 +29,11 @@ export default function Navigation() {
     }).catch(() => {});
   }, [pathname]);
 
-<<<<<<< Updated upstream
   useEffect(() => {
-    setMenuOpen(false);
+    setMobileOpen(false);
   }, [pathname]);
 
-  async function handleLogout() {
-=======
   const logout = async () => {
->>>>>>> Stashed changes
     await fetch("/api/auth", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -63,34 +53,6 @@ export default function Navigation() {
   const isActive = (href: string) => pathname === href;
 
   return (
-<<<<<<< Updated upstream
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="text-xl font-bold text-green-700">
-          TennisMatch
-        </Link>
-
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-1">
-          {links.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                pathname === href
-                  ? "bg-green-100 text-green-800"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              {label}
-            </Link>
-          ))}
-          <div className="ml-3 pl-3 border-l border-gray-200">
-            {user ? (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">{user.email}</span>
-                <button onClick={handleLogout} className="text-xs text-red-600 hover:text-red-800 font-medium">
-=======
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-200/60">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
@@ -148,7 +110,6 @@ export default function Navigation() {
                 </Link>
 
                 <button onClick={logout} className="text-xs text-slate-400 hover:text-red-500 font-medium transition-colors ml-1">
->>>>>>> Stashed changes
                   Logout
                 </button>
               </>
@@ -170,58 +131,6 @@ export default function Navigation() {
           </div>
         </div>
 
-        {/* Mobile hamburger button */}
-        <button
-          className="md:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-        >
-          {menuOpen ? (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
-      </div>
-
-<<<<<<< Updated upstream
-      {/* Mobile menu */}
-      {menuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-white">
-          <div className="px-4 py-2 space-y-1">
-            {links.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`block px-3 py-2.5 rounded-lg text-base font-medium transition-colors ${
-                  pathname === href
-                    ? "bg-green-100 text-green-800"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
-            <div className="pt-2 mt-2 border-t border-gray-200">
-              {user ? (
-                <div className="flex items-center justify-between px-3 py-2">
-                  <span className="text-sm text-gray-500">{user.email}</span>
-                  <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-800 font-medium">
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <Link href="/login" className="block px-3 py-2.5 text-base font-medium text-green-700 hover:text-green-900">
-                  Login
-                </Link>
-              )}
-            </div>
-          </div>
-=======
       {mobileOpen && (
         <div className="md:hidden border-t border-slate-100 bg-white px-4 pb-3 pt-1">
           {navLinks.map((link) => (
@@ -229,9 +138,9 @@ export default function Navigation() {
               className={`block px-3 py-2 rounded-lg text-sm font-medium ${isActive(link.href) ? "bg-emerald-50 text-emerald-700" : "text-slate-500 hover:bg-slate-50"}`}
             >{link.label}</Link>
           ))}
->>>>>>> Stashed changes
         </div>
       )}
+      </div>
     </nav>
   );
 }

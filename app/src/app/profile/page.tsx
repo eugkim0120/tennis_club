@@ -159,12 +159,6 @@ export default function ProfilePage() {
               <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-semibold">{skillLabel(profile.skill_level)} ({profile.skill_level})</span>
             </div>
           </div>
-<<<<<<< Updated upstream
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Age</label>
-              <input type="number" min={13} max={120} value={form.age} onChange={(e) => setForm({ ...form, age: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-=======
 
           {profile.bio && <p className="text-sm text-slate-600 mb-4">{profile.bio}</p>}
 
@@ -177,7 +171,6 @@ export default function ProfilePage() {
                 </div>
                 <span className="text-sm font-bold text-slate-700">{Math.round(profile.reliability_score * 100)}%</span>
               </div>
->>>>>>> Stashed changes
             </div>
             <div className="bg-slate-50 rounded-xl p-3">
               <p className="text-[11px] text-slate-400 font-semibold uppercase tracking-wide mb-1">Games</p>
@@ -195,17 +188,6 @@ export default function ProfilePage() {
               Prefers ages {profile.preferred_age_min}-{profile.preferred_age_max} &middot; Skill {profile.preferred_skill_min}-{profile.preferred_skill_max}
             </p>
           </div>
-<<<<<<< Updated upstream
-          <div>
-            <label className="block text-sm font-medium text-gray-700">City</label>
-            <input type="text" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Bio</label>
-            <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" rows={2} maxLength={500} />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-=======
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-slate-200/60 p-6 shadow-sm">
@@ -214,7 +196,6 @@ export default function ProfilePage() {
             <div className="bg-red-50 border border-red-200/60 text-red-600 px-4 py-2.5 rounded-xl mb-4 text-sm font-medium">{error}</div>
           )}
           <form onSubmit={createProfile} className="space-y-4">
->>>>>>> Stashed changes
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">Name</label>
               <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
@@ -249,24 +230,6 @@ export default function ProfilePage() {
               <textarea value={form.bio} onChange={e => setForm({ ...form, bio: e.target.value })} rows={2} maxLength={500}
                 className="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm bg-slate-50/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 resize-none" />
             </div>
-<<<<<<< Updated upstream
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Preferred Skill Min</label>
-              <input type="number" min={1} max={5} step={0.5} value={form.preferred_skill_min} onChange={(e) => setForm({ ...form, preferred_skill_min: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Preferred Skill Max</label>
-              <input type="number" min={1} max={5} step={0.5} value={form.preferred_skill_max} onChange={(e) => setForm({ ...form, preferred_skill_max: +e.target.value })} className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
-            </div>
-          </div>
-          <button type="submit" disabled={saving} className="w-full bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50">
-            {saving ? "Creating..." : "Create Profile"}
-          </button>
-        </form>
-      </div>
-=======
             <button type="submit" disabled={saving}
               className="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-semibold hover:bg-emerald-700 transition-all disabled:opacity-50 shadow-sm text-sm">
               {saving ? "Creating..." : "Create Profile"}
@@ -274,7 +237,6 @@ export default function ProfilePage() {
           </form>
         </div>
       )}
->>>>>>> Stashed changes
     </div>
   );
 }

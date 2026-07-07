@@ -27,13 +27,24 @@ export interface ScoredMatch {
  * 1) Criteria match (age range, languages overlap)
  * 2) Skill similarity
  * 3) Behavioral similarity (shared match patterns)
+ *
+ * When a sport is specified, only profiles with matching sport preferences are shown.
  */
-export function computeStandouts(profileId: string, limit = 10): ScoredMatch[] {
+export function computeStandouts(profileId: string, limit = 10, sport?: string): ScoredMatch[] {
   const allProfiles = getAllProfiles();
   const me = allProfiles.find((p) => p.id === profileId);
   if (!me) return [];
 
-  const candidates = allProfiles.filter((p) => p.id !== profileId);
+  let candidates = allProfiles.filter((p) => p.id !== profileId);
+
+  // Filter by shared sport preferences
+  if (sport) {
+    candidates = candidates.filter((p) => p.sport_preferences.includes(sport));
+  } else {
+    const mySports = new Set(me.sport_preferences);
+    candidates = candidates.filter((p) => p.sport_preferences.some((s) => mySports.has(s)));
+  }
+
   const scored: ScoredMatch[] = candidates.map((candidate) => {
     const criteria = scoreCriteria(me, candidate);
     const skill = scoreSkill(me, candidate);

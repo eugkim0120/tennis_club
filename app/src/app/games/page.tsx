@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import SportBadge from "@/components/SportBadge";
 
 interface GroupMember {
   profile_id: string;
@@ -23,6 +24,7 @@ interface GameGroup {
   stake_amount: number;
   max_members: number;
   members: GroupMember[];
+  sport?: string;
   court_name?: string;
   court_address?: string;
 }
@@ -136,7 +138,7 @@ export default function GamesPage() {
 
   if (!profileId) return (
     <div className="text-center py-16">
-      <div className="text-slate-300 text-5xl mb-4">🎾</div>
+      <div className="text-slate-300 text-5xl mb-4">&#127934;</div>
       <p className="text-slate-500 font-medium">Sign in and create a profile to see your games</p>
       <Link href="/login" className="inline-block mt-4 px-5 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold hover:bg-emerald-700">Sign In</Link>
     </div>
@@ -158,14 +160,6 @@ export default function GamesPage() {
         </Link>
       </div>
 
-<<<<<<< Updated upstream
-      {upcoming.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="text-lg font-bold text-green-700">Upcoming Games</h2>
-          {upcoming.map((g) => (
-            <div key={g.id} className="bg-white border-2 border-green-200 rounded-xl p-4 md:p-6 space-y-3">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-=======
       {/* Booked Games */}
       {booked.length > 0 && (
         <div className="space-y-3">
@@ -173,7 +167,6 @@ export default function GamesPage() {
           {booked.map((g) => (
             <div key={g.id} className="bg-white rounded-2xl border-2 border-emerald-200/60 p-5 space-y-3 shadow-sm">
               <div className="flex justify-between items-start">
->>>>>>> Stashed changes
                 <div>
                   <h3 className="font-semibold text-slate-900">{g.title || g.court_name || g.city}</h3>
                   {g.court_address && <p className="text-xs text-slate-400 mt-0.5">{g.court_address}</p>}
@@ -182,10 +175,6 @@ export default function GamesPage() {
                   <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-[11px] font-semibold">Booked</span>
                   <span className="px-2.5 py-0.5 bg-amber-50 text-amber-700 rounded-full text-[11px] font-semibold border border-amber-200/50">{g.stake_amount}c staked</span>
                 </div>
-<<<<<<< Updated upstream
-                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold self-start">Booked</span>
-=======
->>>>>>> Stashed changes
               </div>
 
               {g.scheduled_time && (
@@ -193,15 +182,6 @@ export default function GamesPage() {
                   {new Date(g.scheduled_time).toLocaleString("en-US", { weekday: "long", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}
                 </p>
               )}
-<<<<<<< Updated upstream
-              <div>
-                <p className="text-sm font-medium text-gray-700 mb-1">Players ({g.member_names?.length}/4):</p>
-                <div className="flex flex-wrap gap-2">
-                  {g.member_names?.map((name, i) => (
-                    <span key={i} className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-sm font-medium">{name}</span>
-                  ))}
-                </div>
-=======
 
               <div className="flex -space-x-2">
                 {g.members.map((m, i) => (
@@ -230,7 +210,6 @@ export default function GamesPage() {
                   className="px-4 py-1.5 text-red-500 hover:bg-red-50 rounded-lg text-xs font-semibold transition-colors ml-auto">
                   Cancel
                 </button>
->>>>>>> Stashed changes
               </div>
             </div>
           ))}
@@ -242,21 +221,6 @@ export default function GamesPage() {
         <div className="space-y-3">
           <h2 className="text-sm font-semibold text-amber-600 uppercase tracking-wide">Forming</h2>
           {forming.map((g) => (
-<<<<<<< Updated upstream
-            <div key={g.id} className="bg-white border border-yellow-200 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-              <div>
-                <span className="font-semibold">{g.city}</span>
-                <span className="ml-2 text-sm text-yellow-700">{g.member_names?.length}/4 players</span>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {g.member_names?.map((name, i) => (
-                    <span key={i} className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">{name}</span>
-                  ))}
-                </div>
-              </div>
-              <div className="flex gap-3 self-start sm:self-center">
-                <button onClick={() => openChat(g.id)} className="text-sm text-green-700 font-medium hover:underline">Chat</button>
-                <button onClick={() => leaveGroup(g.id)} className="text-sm text-red-500 font-medium hover:underline">Leave</button>
-=======
             <div key={g.id} className="bg-white rounded-2xl border border-amber-200/60 p-5">
               <div className="flex justify-between items-center">
                 <div>
@@ -291,7 +255,6 @@ export default function GamesPage() {
               <div className="flex justify-between items-center">
                 <span className="font-medium text-sm text-slate-600">{g.title || g.city}</span>
                 <span className="text-xs text-slate-400">Completed</span>
->>>>>>> Stashed changes
               </div>
             </div>
           ))}
@@ -300,7 +263,7 @@ export default function GamesPage() {
 
       {games.length === 0 && (
         <div className="text-center py-16">
-          <div className="text-slate-300 text-5xl mb-4">🎾</div>
+          <div className="text-slate-300 text-5xl mb-4">&#127934;</div>
           <p className="text-slate-500 font-medium">No games yet</p>
           <p className="text-sm text-slate-400 mt-1">Create a game or browse open ones to get started</p>
           <div className="flex gap-3 justify-center mt-4">

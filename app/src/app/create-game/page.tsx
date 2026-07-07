@@ -19,6 +19,12 @@ export default function CreateGamePage() {
   const [maxSkill, setMaxSkill] = useState(5.0);
   const [minReliability, setMinReliability] = useState(0);
   const [maxMembers, setMaxMembers] = useState(4);
+  const [sport, setSport] = useState("tennis");
+  const [sports, setSports] = useState<{id: string; name: string; icon: string}[]>([]);
+
+  useEffect(() => {
+    fetch("/api/sports").then(r => r.ok ? r.json() : []).then(setSports);
+  }, []);
 
   useEffect(() => {
     fetch("/api/auth/me").then(r => r.ok ? r.json() : null).then(d => {
@@ -45,6 +51,7 @@ export default function CreateGamePage() {
         max_skill: maxSkill,
         min_reliability: minReliability / 100,
         max_members: maxMembers,
+        sport,
       }),
     });
 

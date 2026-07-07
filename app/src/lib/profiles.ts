@@ -16,6 +16,7 @@ export interface Profile {
   preferred_age_max: number;
   preferred_skill_min: number;
   preferred_skill_max: number;
+  sport_preferences: string[];
   created_at: string;
 }
 
@@ -33,21 +34,37 @@ export interface CreateProfileInput {
   preferred_age_max?: number;
   preferred_skill_min?: number;
   preferred_skill_max?: number;
+  sport_preferences?: string[];
 }
+
+const JSON_FIELDS = new Set(["languages", "sport_preferences"]);
 
 function rowToProfile(row: Record<string, unknown>): Profile {
   return {
-    ...row,
-    languages: JSON.parse(row.languages as string),
-  } as Profile;
+    id: row.id as string,
+    name: row.name as string,
+    age: row.age as number,
+    languages: JSON.parse((row.languages as string) || "[]"),
+    skill_level: row.skill_level as number,
+    latitude: row.latitude as number | null,
+    longitude: row.longitude as number | null,
+    city: row.city as string | null,
+    bio: (row.bio as string) || "",
+    preferred_age_min: (row.preferred_age_min as number) ?? 18,
+    preferred_age_max: (row.preferred_age_max as number) ?? 99,
+    preferred_skill_min: (row.preferred_skill_min as number) ?? 1.0,
+    preferred_skill_max: (row.preferred_skill_max as number) ?? 5.0,
+    sport_preferences: JSON.parse((row.sport_preferences as string) || '["tennis"]'),
+    created_at: (row.created_at as string) || "",
+  };
 }
 
 export function createProfile(input: CreateProfileInput): Profile {
   const db = getDb();
   const id = uuid();
   db.prepare(`
-    INSERT INTO profiles (id, user_id, name, age, languages, skill_level, latitude, longitude, city, bio, preferred_age_min, preferred_age_max, preferred_skill_min, preferred_skill_max)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO profiles (id, user_id, name, age, languages, skill_level, latitude, longitude, city, bio, preferred_age_min, preferred_age_max, preferred_skill_min, preferred_skill_max, sport_preferences)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     id,
     input.user_id ?? null,
@@ -62,7 +79,8 @@ export function createProfile(input: CreateProfileInput): Profile {
     input.preferred_age_min ?? 18,
     input.preferred_age_max ?? 99,
     input.preferred_skill_min ?? 1.0,
-    input.preferred_skill_max ?? 5.0
+    input.preferred_skill_max ?? 5.0,
+    JSON.stringify(input.sport_preferences ?? ["tennis"])
   );
   return getProfile(id)!;
 }
@@ -90,7 +108,7 @@ export function updateProfile(id: string, input: Partial<CreateProfileInput>): P
   for (const [key, value] of Object.entries(input)) {
     if (value !== undefined) {
       fields.push(`${key} = ?`);
-      values.push(key === "languages" ? JSON.stringify(value) : value);
+      values.push(JSON_FIELDS.has(key) ? JSON.stringify(value) : value);
     }
   }
 

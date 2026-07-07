@@ -33,6 +33,17 @@ export function validateProfile(body: Record<string, unknown>): ValidationError[
     }
   }
 
+  if (body.sport_preferences !== undefined) {
+    if (!Array.isArray(body.sport_preferences)) {
+      errors.push({ field: "sport_preferences", message: "Sport preferences must be an array of strings" });
+    } else if (body.sport_preferences.length === 0) {
+      errors.push({ field: "sport_preferences", message: "At least one sport must be selected" });
+    } else {
+      const invalid = (body.sport_preferences as unknown[]).some((s) => typeof s !== "string");
+      if (invalid) errors.push({ field: "sport_preferences", message: "Each sport preference must be a string" });
+    }
+  }
+
   if (body.bio !== undefined && typeof body.bio === "string" && body.bio.length > 500) {
     errors.push({ field: "bio", message: "Bio must be 500 characters or fewer" });
   }

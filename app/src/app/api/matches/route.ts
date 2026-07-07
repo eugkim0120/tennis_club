@@ -3,6 +3,7 @@ import { computeStandouts, expressInterest, passOnProfile, getMutualMatches } fr
 
 export async function GET(req: NextRequest) {
   const profileId = req.nextUrl.searchParams.get("profile_id");
+  const sport = req.nextUrl.searchParams.get("sport") ?? undefined;
   const type = req.nextUrl.searchParams.get("type") ?? "standouts";
 
   if (!profileId) {
@@ -14,7 +15,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(matches);
   }
 
-  const standouts = computeStandouts(profileId);
+  const standouts = computeStandouts(profileId, 10, sport);
   return NextResponse.json(standouts);
 }
 

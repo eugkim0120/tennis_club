@@ -7,8 +7,9 @@ export async function GET(req: NextRequest) {
   const city = req.nextUrl.searchParams.get("city") ?? undefined;
   const skillStr = req.nextUrl.searchParams.get("skill");
   const skill = skillStr ? parseFloat(skillStr) : undefined;
+  const sport = req.nextUrl.searchParams.get("sport") ?? undefined;
 
-  const groups = browseGroups(city, skill);
+  const groups = browseGroups(city, skill, sport);
   return NextResponse.json(groups);
 }
 
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { title, city, description, scheduled_time, court_id, join_mode, stake_amount, min_skill, max_skill, min_reliability, max_members } = body as Record<string, string | number>;
+  const { title, city, description, scheduled_time, court_id, join_mode, stake_amount, min_skill, max_skill, min_reliability, max_members, sport } = body as Record<string, string | number>;
 
   if (!title || !city) {
     return NextResponse.json({ error: "title and city are required" }, { status: 400 });
@@ -48,6 +49,7 @@ export async function POST(req: NextRequest) {
       maxSkill: max_skill ? Number(max_skill) : undefined,
       minReliability: min_reliability ? Number(min_reliability) : undefined,
       maxMembers: max_members ? Number(max_members) : undefined,
+      sport: sport as string | undefined,
     });
     return NextResponse.json(group, { status: 201 });
   } catch (err) {

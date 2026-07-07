@@ -20,17 +20,6 @@ export default function Home() {
   if (loggedIn === null || loggedIn) return null;
 
   return (
-<<<<<<< Updated upstream
-    <div className="space-y-8">
-      <div className="text-center py-16">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">TennisMatch</h1>
-        <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-          Find tennis partners near you. Get matched by skill level. We auto-book a court when your group hits 4.
-        </p>
-        <Link href="/login" className="bg-green-600 text-white px-6 md:px-8 py-3 rounded-lg text-lg font-medium hover:bg-green-700 transition-colors inline-block">
-          Get Started
-        </Link>
-=======
     <div className="min-h-[80vh] flex flex-col items-center justify-center -mt-6">
       {/* Hero */}
       <div className="text-center max-w-3xl mx-auto px-4 py-16">
@@ -43,7 +32,7 @@ export default function Home() {
           <span className="text-emerald-600">Show up.</span>
         </h1>
         <p className="text-lg text-slate-500 max-w-xl mx-auto mb-8 leading-relaxed">
-          Match with tennis players by skill level, form groups, stake credits to lock in commitment, and auto-book real courts. No more no-shows.
+          Match with players by skill level, form groups across multiple sports, stake credits to lock in commitment, and auto-book real courts. No more no-shows.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link href="/login" className="px-8 py-3 bg-emerald-600 text-white rounded-xl text-base font-semibold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30">
@@ -53,7 +42,6 @@ export default function Home() {
             Browse Games
           </Link>
         </div>
->>>>>>> Stashed changes
       </div>
 
       {/* Features */}
@@ -62,7 +50,7 @@ export default function Home() {
           {
             icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>,
             title: "Smart Matching",
-            desc: "Our algorithm scores players on skill compatibility, age preferences, and behavioral patterns. Find your perfect doubles partner.",
+            desc: "Our algorithm scores players on skill compatibility, age preferences, and behavioral patterns. Find your perfect partner across tennis, padel, and more.",
           },
           {
             icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" strokeWidth="1.5"/><path strokeLinecap="round" strokeWidth="1.5" d="M12 8v8m0-8c1.1 0 2.08.4 2.6 1M12 16c-1.1 0-2.08-.4-2.6-1"/></svg>,
@@ -72,7 +60,7 @@ export default function Home() {
           {
             icon: <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>,
             title: "Real Courts",
-            desc: "We discover real tennis courts via OpenStreetMap and auto-book when your group fills up. Just show up and play.",
+            desc: "We discover real courts via OpenStreetMap and auto-book when your group fills up. Just show up and play.",
           },
         ].map((f) => (
           <div key={f.title} className="bg-white rounded-2xl p-6 border border-slate-200/60 hover:border-emerald-200 transition-all hover:shadow-md group">

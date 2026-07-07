@@ -1,5 +1,6 @@
 import Database from "better-sqlite3";
 import path from "path";
+import { seedSports } from "./sports";
 
 const DB_PATH = path.join(process.cwd(), "tennis_club.db");
 
@@ -11,12 +12,22 @@ export function getDb(): Database.Database {
     _db.pragma("journal_mode = WAL");
     _db.pragma("foreign_keys = ON");
     initSchema(_db);
+    seedSports();
   }
   return _db;
 }
 
 function initSchema(db: Database.Database) {
   db.exec(`
+    CREATE TABLE IF NOT EXISTS sports (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      icon TEXT DEFAULT '🎾',
+      players_per_side INTEGER NOT NULL DEFAULT 1,
+      max_players INTEGER NOT NULL DEFAULT 4,
+      team_sport INTEGER NOT NULL DEFAULT 0
+    );
+
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       email TEXT NOT NULL UNIQUE,
@@ -43,6 +54,7 @@ function initSchema(db: Database.Database) {
       reliability_score REAL NOT NULL DEFAULT 1.0,
       games_played INTEGER NOT NULL DEFAULT 0,
       games_attended INTEGER NOT NULL DEFAULT 0,
+      sport_preferences TEXT NOT NULL DEFAULT '["tennis"]',
       created_at TEXT DEFAULT (datetime('now'))
     );
 
@@ -56,7 +68,21 @@ function initSchema(db: Database.Database) {
       surface TEXT DEFAULT 'hard',
       available_slots TEXT NOT NULL DEFAULT '[]',
       source_url TEXT,
-      last_scraped TEXT
+      last_scraped TEXT,
+      phone TEXT,
+      website TEXT,
+      booking_url TEXT,
+      booking_method TEXT DEFAULT 'unknown',
+      hours TEXT,
+      rating REAL,
+      photo_url TEXT,
+      num_courts INTEGER DEFAULT 1,
+      indoor INTEGER DEFAULT 0,
+      lit INTEGER DEFAULT 0,
+      access_type TEXT DEFAULT 'unknown',
+      operator TEXT,
+      data_sources TEXT NOT NULL DEFAULT '[]',
+      sport TEXT NOT NULL DEFAULT 'tennis' REFERENCES sports(id)
     );
 
     CREATE TABLE IF NOT EXISTS match_interests (
@@ -84,6 +110,7 @@ function initSchema(db: Database.Database) {
       max_skill REAL DEFAULT 5.0,
       min_reliability REAL DEFAULT 0.0,
       max_members INTEGER NOT NULL DEFAULT 4,
+      sport TEXT NOT NULL DEFAULT 'tennis' REFERENCES sports(id),
       created_at TEXT DEFAULT (datetime('now'))
     );
 
@@ -110,6 +137,7 @@ function initSchema(db: Database.Database) {
       court_id TEXT NOT NULL REFERENCES courts(id),
       time_slot TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'pending',
+      sport TEXT NOT NULL DEFAULT 'tennis' REFERENCES sports(id),
       created_at TEXT DEFAULT (datetime('now'))
     );
 
@@ -160,4 +188,15 @@ function initSchema(db: Database.Database) {
       created_at TEXT DEFAULT (datetime('now'))
     );
   `);
+
+  // Migration: add columns to existing tables (safe if already present)
+  const migrations = [
+    `ALTER TABLE profiles ADD COLUMN sport_preferences TEXT NOT NULL DEFAULT '["tennis"]'`,
+    `ALTER TABLE courts ADD COLUMN sport TEXT NOT NULL DEFAULT 'tennis' REFERENCES sports(id)`,
+    `ALTER TABLE groups ADD COLUMN sport TEXT NOT NULL DEFAULT 'tennis' REFERENCES sports(id)`,
+    `ALTER TABLE bookings ADD COLUMN sport TEXT NOT NULL DEFAULT 'tennis' REFERENCES sports(id)`,
+  ];
+  for (const sql of migrations) {
+    try { db.exec(sql); } catch { /* column already exists */ }
+  }
 }

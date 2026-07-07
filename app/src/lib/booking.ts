@@ -22,6 +22,7 @@ export interface Group {
   max_skill: number;
   min_reliability: number;
   max_members: number;
+  sport: string;
   created_at: string;
 }
 
@@ -62,11 +63,13 @@ export interface CreateGroupInput {
   maxSkill?: number;
   minReliability?: number;
   maxMembers?: number;
+  sport?: string;
 }
 
 export function createGroup(input: CreateGroupInput): GroupWithMembers {
   const db = getDb();
   const stakeAmount = input.stakeAmount ?? 10;
+  const sport = input.sport ?? "tennis";
 
   // Stake credits for the creator
   const staked = stakeCredits(input.creatorUserId, stakeAmount, "pending_group", `Stake for creating game: ${input.title}`);
@@ -74,8 +77,8 @@ export function createGroup(input: CreateGroupInput): GroupWithMembers {
 
   const id = uuid();
   db.prepare(`
-    INSERT INTO groups (id, creator_id, title, description, court_id, scheduled_time, status, city, join_mode, stake_amount, min_skill, max_skill, min_reliability, max_members)
-    VALUES (?, ?, ?, ?, ?, ?, 'forming', ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO groups (id, creator_id, title, description, court_id, scheduled_time, status, city, join_mode, stake_amount, min_skill, max_skill, min_reliability, max_members, sport)
+    VALUES (?, ?, ?, ?, ?, ?, 'forming', ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(
     id,
     input.creatorProfileId,
@@ -89,7 +92,8 @@ export function createGroup(input: CreateGroupInput): GroupWithMembers {
     input.minSkill ?? 1.0,
     input.maxSkill ?? 5.0,
     input.minReliability ?? 0.0,
-    input.maxMembers ?? 4
+    input.maxMembers ?? 4,
+    sport
   );
 
   // Update the stake reference to use the actual group id
@@ -105,16 +109,16 @@ export function createGroup(input: CreateGroupInput): GroupWithMembers {
 }
 
 // Legacy function for backward compatibility
-export function getOrCreateGroup(city: string): Group {
+export function getOrCreateGroup(city: string, sport: string = "tennis"): Group {
   const db = getDb();
   const existing = db
-    .prepare("SELECT * FROM groups WHERE LOWER(city) = LOWER(?) AND status = 'forming'")
-    .get(city) as Group | undefined;
+    .prepare("SELECT * FROM groups WHERE LOWER(city) = LOWER(?) AND status = 'forming' AND sport = ?")
+    .get(city, sport) as Group | undefined;
 
   if (existing) return existing;
 
   const id = uuid();
-  db.prepare("INSERT INTO groups (id, city, status) VALUES (?, ?, 'forming')").run(id, city);
+  db.prepare("INSERT INTO groups (id, city, status, sport) VALUES (?, ?, 'forming', ?)").run(id, city, sport);
   return db.prepare("SELECT * FROM groups WHERE id = ?").get(id) as Group;
 }
 
@@ -137,11 +141,16 @@ export function joinGroup(groupId: string, profileId: string, userId: string): G
     .get(groupId) as { count: number };
   if (memberCount.count >= group.max_members) throw new Error("Group is full");
 
-  // Check skill filter
-  const profile = db.prepare("SELECT skill_level, reliability_score FROM profiles WHERE id = ?").get(profileId) as {
-    skill_level: number; reliability_score: number;
+  // Check sport preference
+  const profile = db.prepare("SELECT skill_level, reliability_score, sport_preferences FROM profiles WHERE id = ?").get(profileId) as {
+    skill_level: number; reliability_score: number; sport_preferences: string;
   } | undefined;
   if (!profile) throw new Error("Profile not found");
+
+  const prefs: string[] = JSON.parse(profile.sport_preferences || '["tennis"]');
+  if (!prefs.includes(group.sport)) {
+    throw new Error(`This group is for ${group.sport}, but your sport preferences don't include it`);
+  }
 
   if (profile.skill_level < group.min_skill || profile.skill_level > group.max_skill) {
     throw new Error(`Skill level must be between ${group.min_skill} and ${group.max_skill}`);
@@ -175,23 +184,32 @@ export function joinGroup(groupId: string, profileId: string, userId: string): G
 
   // Auto-book when we reach max members
   if (result.members.length >= group.max_members && group.status === "forming") {
-    autoBook(groupId, group.city);
+    autoBook(groupId, group.city, group.sport);
     return getGroupWithMembers(groupId)!;
   }
 
   return result;
 }
 
-function autoBook(groupId: string, city: string): Booking | null {
+function autoBook(groupId: string, city: string, sport: string): Booking | null {
   const db = getDb();
-  let courts = getCourtsByCity(city);
+  let courts = db.prepare(
+    "SELECT * FROM courts WHERE LOWER(city) = LOWER(?) AND sport = ?"
+  ).all(city, sport) as Record<string, unknown>[];
 
   if (courts.length === 0) {
     scrapeCourts(city);
-    courts = getCourtsByCity(city);
+    courts = db.prepare(
+      "SELECT * FROM courts WHERE LOWER(city) = LOWER(?) AND sport = ?"
+    ).all(city, sport) as Record<string, unknown>[];
   }
 
-  for (const court of courts) {
+  for (const courtRow of courts) {
+    const court = {
+      ...courtRow,
+      available_slots: JSON.parse(courtRow.available_slots as string || "[]"),
+    } as { id: string; name: string; available_slots: string[] };
+
     if (court.available_slots.length > 0) {
       const slot = court.available_slots[0];
       const bookingId = uuid();
@@ -200,8 +218,8 @@ function autoBook(groupId: string, city: string): Booking | null {
         court.id, slot, groupId
       );
 
-      db.prepare("INSERT INTO bookings (id, group_id, court_id, time_slot, status) VALUES (?, ?, ?, ?, 'confirmed')").run(
-        bookingId, groupId, court.id, slot
+      db.prepare("INSERT INTO bookings (id, group_id, court_id, time_slot, status, sport) VALUES (?, ?, ?, ?, 'confirmed', ?)").run(
+        bookingId, groupId, court.id, slot, sport
       );
 
       const updatedSlots = court.available_slots.filter((s) => s !== slot);
@@ -336,7 +354,7 @@ export function getGroupsForProfile(profileId: string): GroupWithMembers[] {
   });
 }
 
-export function browseGroups(city?: string, skillLevel?: number): GroupWithMembers[] {
+export function browseGroups(city?: string, skillLevel?: number, sport?: string): GroupWithMembers[] {
   const db = getDb();
   let query = "SELECT * FROM groups WHERE status = 'forming'";
   const params: (string | number)[] = [];
@@ -344,6 +362,11 @@ export function browseGroups(city?: string, skillLevel?: number): GroupWithMembe
   if (city) {
     query += " AND LOWER(city) = LOWER(?)";
     params.push(city);
+  }
+
+  if (sport) {
+    query += " AND sport = ?";
+    params.push(sport);
   }
 
   if (skillLevel) {

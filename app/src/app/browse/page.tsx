@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import SportBadge from "@/components/SportBadge";
 
 interface GroupMember {
   profile_id: string;
@@ -40,16 +41,23 @@ export default function BrowsePage() {
   const [cityFilter, setCityFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState<string | null>(null);
+  const [sport, setSport] = useState("");
+  const [sports, setSports] = useState<{id: string; name: string; icon: string}[]>([]);
   const [auth, setAuth] = useState<{ user: { id: string } | null; profile_id: string | null }>({ user: null, profile_id: null });
-
+  
   useEffect(() => {
     fetch("/api/auth/me").then(r => r.ok ? r.json() : null).then(d => { if (d) setAuth(d); });
     loadGroups();
+    fetch("/api/sports").then(r => r.ok ? r.json() : []).then(setSports);
   }, []);
 
-  async function loadGroups(city?: string) {
+  async function loadGroups(city?: string, sportFilter?: string) {
     setLoading(true);
-    const url = city ? `/api/groups?city=${encodeURIComponent(city)}` : "/api/groups";
+    const params = new URLSearchParams();
+    if (city) params.set("city", city);
+    if (sportFilter) params.set("sport", sportFilter);
+    const qs = params.toString();
+    const url = qs ? `/api/groups?${qs}` : "/api/groups";
     const res = await fetch(url);
     if (res.ok) setGroups(await res.json());
     setLoading(false);
@@ -69,6 +77,26 @@ export default function BrowsePage() {
 
   return (
     <div className="space-y-6">
+      {/* Sport filter */}
+      {sports.length > 0 && (
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={() => { setSport(""); loadGroups(cityFilter || undefined, ""); }}
+            className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all ${
+              sport === "" ? "bg-emerald-600 text-white shadow-lg" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+            }`}
+          >All</button>
+          {sports.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => { setSport(s.id); loadGroups(cityFilter || undefined, s.id); }}
+              className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all ${
+                sport === s.id ? "bg-emerald-600 text-white shadow-lg" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >{s.icon} {s.name}</button>
+          ))}
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Browse Games</h1>
@@ -110,11 +138,12 @@ export default function BrowsePage() {
             return (
               <div key={g.id} className="bg-white rounded-2xl border border-slate-200/60 p-5 hover:border-emerald-200 transition-all hover:shadow-md">
                 <div className="flex items-start justify-between mb-3">
-                  <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {(g as any).sport && <SportBadge sport={(g as any).sport} />}
                     <h3 className="font-semibold text-slate-900">{g.title || `Game in ${g.city}`}</h3>
-                    <p className="text-xs text-slate-400 mt-0.5">{g.city}{g.scheduled_time ? ` · ${new Date(g.scheduled_time).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}` : ""}</p>
                   </div>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-slate-400">{g.city}{g.scheduled_time ? ` · ${new Date(g.scheduled_time).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}` : ""}</p>
                     <span className="px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full text-[11px] font-semibold border border-amber-200/50">
                       {g.stake_amount} credits
                     </span>

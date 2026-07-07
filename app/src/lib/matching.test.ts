@@ -14,7 +14,7 @@ jest.mock("./db", () => ({
           languages TEXT NOT NULL DEFAULT '[]', skill_level REAL NOT NULL DEFAULT 3.0,
           latitude REAL, longitude REAL, city TEXT, bio TEXT DEFAULT '',
           preferred_age_min INTEGER DEFAULT 18, preferred_age_max INTEGER DEFAULT 99,
-          preferred_skill_min REAL DEFAULT 1.0, preferred_skill_max REAL DEFAULT 5.0,
+          preferred_skill_min REAL DEFAULT 1.0, preferred_skill_max REAL DEFAULT 5.0, sport_preferences TEXT NOT NULL DEFAULT '["tennis"]',
           reliability_score REAL NOT NULL DEFAULT 1.0,
           games_played INTEGER NOT NULL DEFAULT 0, games_attended INTEGER NOT NULL DEFAULT 0,
           created_at TEXT DEFAULT (datetime('now'))
@@ -39,11 +39,11 @@ function insertProfile(id: string, overrides: Record<string, unknown> = {}) {
     city: "New York", bio: "", preferred_age_min: 18, preferred_age_max: 50,
     preferred_skill_min: 1.0, preferred_skill_max: 5.0,
   };
-  const p = { ...defaults, ...overrides };
+  const p = { ...defaults, ...overrides, sport_preferences: overrides.sport_preferences as string ?? '["tennis"]' };
   testDb.prepare(`
-    INSERT INTO profiles (id, name, age, languages, skill_level, city, bio, preferred_age_min, preferred_age_max, preferred_skill_min, preferred_skill_max)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(id, p.name, p.age, p.languages, p.skill_level, p.city, p.bio, p.preferred_age_min, p.preferred_age_max, p.preferred_skill_min, p.preferred_skill_max);
+    INSERT INTO profiles (id, name, age, languages, skill_level, city, bio, preferred_age_min, preferred_age_max, preferred_skill_min, preferred_skill_max, sport_preferences)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(id, p.name, p.age, p.languages, p.skill_level, p.city, p.bio, p.preferred_age_min, p.preferred_age_max, p.preferred_skill_min, p.preferred_skill_max, p.sport_preferences);
 }
 
 beforeEach(() => {

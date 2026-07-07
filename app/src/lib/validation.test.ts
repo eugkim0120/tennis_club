@@ -34,6 +34,30 @@ describe("validateProfile", () => {
     expect(errors.some((e) => e.field === "languages")).toBe(true);
   });
 
+  it("rejects empty sport_preferences", () => {
+    const errors = validateProfile({
+      name: "Test", age: 25, skill_level: 3.0,
+      sport_preferences: [],
+    });
+    expect(errors.some((e) => e.field === "sport_preferences")).toBe(true);
+  });
+
+  it("rejects non-array sport_preferences", () => {
+    const errors = validateProfile({
+      name: "Test", age: 25, skill_level: 3.0,
+      sport_preferences: "tennis",
+    });
+    expect(errors.some((e) => e.field === "sport_preferences")).toBe(true);
+  });
+
+  it("passes valid sport_preferences", () => {
+    const errors = validateProfile({
+      name: "Test", age: 25, skill_level: 3.0,
+      sport_preferences: ["tennis", "padel"],
+    });
+    expect(errors.some((e) => e.field === "sport_preferences")).toBe(false);
+  });
+
   it("passes valid profile", () => {
     const errors = validateProfile({
       name: "Sarah",
